@@ -38,10 +38,13 @@ self.addEventListener('fetch', event => {
 
     let response;
     if (needStoreForOffline(cacheKey)) {
-        response = caches.match(cacheKey)
-            .then(cacheResponse => cacheResponse || fetchAndPutToCache(cacheKey, event.request));
+
+        response = fetchAndPutToCache(cacheKey, event.request);
+
     } else {
+
         response = fetchWithFallbackToCache(event.request);
+
     }
 
     event.respondWith(response);
