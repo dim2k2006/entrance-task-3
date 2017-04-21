@@ -6,16 +6,22 @@
 
 const CACHE_VERSION = '1.0.0-broken';
 
-importScripts('./vendor/kv-keeper.js-1.0.4/kv-keeper.js');
-
+importScripts('vendor/kv-keeper.js-1.0.4/kv-keeper.js');
 
 self.addEventListener('install', event => {
-    const promise = preCacheAllFavorites()
-        // Вопрос №1: зачем нужен этот вызов?
-        .then(() => self.skipWaiting())
-        .then(() => console.log('[ServiceWorker] Installed!'));
+    const favorites = preCacheAllFavorites();
+    const resources = preCacheAllResources();
 
-    event.waitUntil(promise);
+    event.waitUntil(
+        Promise
+            .all([
+                favorites,
+                resources
+            ])
+            // Вопрос №1: зачем нужен этот вызов?
+            .then(() => self.skipWaiting())
+            .then(() => console.log('[ServiceWorker] Installed!'))
+    );
 });
 
 self.addEventListener('activate', event => {
@@ -70,6 +76,24 @@ function preCacheAllFavorites() {
                         responses.map(response => cache.put(response.url, response))
                     );
                 });
+        });
+}
+
+// Положить в новый кеш все ресурсы приложения
+function preCacheAllResources() {
+    return caches.open(CACHE_VERSION)
+        .then(function(cache) {
+            return cache.addAll([
+                '/entrance-task-3/assets/blocks.js',
+                '/entrance-task-3/assets/star.svg',
+                '/entrance-task-3/assets/style.css',
+                '/entrance-task-3/assets/templates.js',
+                '/entrance-task-3/vendor/bem-components-dist-5.0.0/touch-phone/bem-components.dev.css',
+                '/entrance-task-3/vendor/bem-components-dist-5.0.0/touch-phone/bem-components.dev.js',
+                '/entrance-task-3/vendor/kv-keeper.js-1.0.4/kv-keeper.js',
+                '/entrance-task-3/vendor/kv-keeper.js-1.0.4/kv-keeper.typedef.js',
+                '/entrance-task-3/gifs.html',
+            ]);
         });
 }
 
