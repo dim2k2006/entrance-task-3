@@ -84,6 +84,7 @@ function preCacheAllResources() {
     return caches.open(CACHE_VERSION)
         .then(function(cache) {
             return cache.addAll([
+                'https://yastatic.net/jquery/3.1.0/jquery.min.js',
                 '/entrance-task-3/assets/blocks.js',
                 '/entrance-task-3/assets/star.svg',
                 '/entrance-task-3/assets/style.css',
