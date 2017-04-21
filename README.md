@@ -58,3 +58,18 @@ const cacheKey = url.origin + url.pathname;
 ```
 
 Нет, не для всех. При наличии в адресе get параметров, они не будут учтены.
+
+### Вопрос №4: зачем нужна эта цепочка вызовов?
+
+```js
+return Promise.all(
+    names.filter(name => name !== CACHE_VERSION)
+        .map(name => {
+            console.log('[ServiceWorker] Deleting obsolete cache:', name);
+            return caches.delete(name);
+        })
+);
+```
+
+Данная цепочка вызовов необходима для удаления предедущей версии кеша.
+
